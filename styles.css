@@ -177,6 +177,13 @@ button { color: inherit; }
 .value-symbol { color: var(--gold); font-size: 20px; }
 .value-card h3 { margin: 19px 0 8px; font-size: 13px; font-weight: 600; }
 .value-card p { max-width: 300px; margin: 0; color: #898a81; font-size: 10px; line-height: 1.75; }
+.reflection-card { position: relative; overflow: hidden; border: 1px solid rgba(245,196,0,.17); background: linear-gradient(115deg, rgba(245,196,0,.07), transparent 54%), #171815; padding: 25px clamp(20px, 4vw, 42px) 19px; }
+.reflection-mark { position: absolute; top: 13px; right: 24px; color: rgba(245,196,0,.15); font-family: Georgia, serif; font-size: 100px; line-height: .8; }
+.reflection-copy { position: relative; max-width: 760px; }
+.reflection-copy p { margin: 0 0 12px; color: #a6a69d; font-size: 11px; line-height: 1.85; }
+.reflection-copy p:last-child { margin-bottom: 18px; color: #e0e0d8; }
+.reflection-tag { color: #77786f; font-family: var(--mono); font-size: 8px; letter-spacing: .07em; }
+.reflection-tag span { color: var(--gold); padding: 0 4px; }
 .about-cta { position: relative; display: flex; min-height: 133px; align-items: center; justify-content: space-between; gap: 20px; overflow: hidden; margin-top: 22px; border: 1px solid rgba(245,196,0,.18); background: linear-gradient(100deg, rgba(245,196,0,.095), transparent 68%), #171815; padding: 24px 28px; }
 .about-cta h2 { margin: 7px 0 0; font-size: 20px; letter-spacing: -.04em; }
 .about-cta .eyebrow { color: var(--gold); }
