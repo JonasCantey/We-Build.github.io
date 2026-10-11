@@ -91,6 +91,13 @@ function setRoute(route) {
     analytics: "DATA ANALYTICS"
   }[validRoute];
   window.scrollTo({ top: 0, behavior: "smooth" });
+  if (validRoute === "analytics") {
+    renderAnalytics();
+    window.requestAnimationFrame(() => {
+      if (statusChartInstance) statusChartInstance.resize();
+      if (budgetChartInstance) budgetChartInstance.resize();
+    });
+  }
 }
 
 function showToast(message) {
@@ -186,6 +193,8 @@ function renderAnalytics() {
 }
 
 function renderAnalyticsCharts(counts, budgetProjects) {
+  if (!document.getElementById("page-analytics").classList.contains("active")) return;
+
   if (typeof Chart === "undefined") {
     document.querySelectorAll(".chart-canvas-wrap").forEach(element => { element.hidden = true; });
     document.getElementById("status-chart-error").hidden = false;
