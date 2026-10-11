@@ -92,11 +92,21 @@ function setRoute(route) {
   }[validRoute];
   window.scrollTo({ top: 0, behavior: "smooth" });
   if (validRoute === "analytics") {
-    renderAnalytics();
-    window.requestAnimationFrame(() => {
-      if (statusChartInstance) statusChartInstance.resize();
-      if (budgetChartInstance) budgetChartInstance.resize();
-    });
+    const analyticsPage = document.getElementById("page-analytics");
+    const refreshCharts = () => {
+      if (!analyticsPage.classList.contains("active")) return;
+      renderAnalytics();
+      window.requestAnimationFrame(() => {
+        [statusChartInstance, budgetChartInstance].forEach(chart => {
+          if (!chart) return;
+          chart.resize();
+          chart.update("none");
+        });
+      });
+    };
+    window.requestAnimationFrame(refreshCharts);
+    analyticsPage.addEventListener("animationend", refreshCharts, { once: true });
+    window.setTimeout(refreshCharts, 450);
   }
 }
 
