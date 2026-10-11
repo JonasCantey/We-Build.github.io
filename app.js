@@ -22,6 +22,16 @@ const compactCurrencyFormatter = new Intl.NumberFormat("en-US", {
 
 let projects = loadProjects();
 let toastTimer;
+let statusChartInstance;
+let budgetChartInstance;
+let chartLoadErrorReported = false;
+
+const chartPalette = {
+  "In progress": "#f5c400",
+  Planning: "#8292bd",
+  "On hold": "#dc9272",
+  Completed: "#77b997"
+};
 
 function loadProjects() {
   try {
@@ -75,7 +85,7 @@ function setRoute(route) {
     else link.removeAttribute("aria-current");
   });
   document.getElementById("page-crumb").textContent = {
-    home: "OVERVIEW",
+    home: "HOME",
     about: "ABOUT US",
     projects: "PROJECT CONTROL",
     analytics: "DATA ANALYTICS"
@@ -158,24 +168,8 @@ function renderAnalytics() {
     status,
     count: projects.filter(project => project.status === status).length
   }));
-  const maxCount = Math.max(1, ...counts.map(item => item.count));
-  document.getElementById("status-chart").innerHTML = counts.map(item => `
-    <div class="status-chart-row">
-      <span class="status-chart-label">${item.status}</span>
-      <div class="status-chart-track"><div class="status-chart-fill status-${statusClass(item.status)}" style="width:${item.count ? Math.max(4, item.count / maxCount * 100) : 0}%"></div></div>
-      <span class="status-chart-value">${item.count}</span>
-    </div>`).join("");
-
   const budgetProjects = [...projects].sort((a, b) => b.budget - a.budget).slice(0, 5);
-  const highestBudget = Math.max(1, ...budgetProjects.map(project => Number(project.budget) || 0));
-  document.getElementById("budget-chart").innerHTML = budgetProjects.length
-    ? budgetProjects.map(project => `
-      <div class="budget-chart-row">
-        <span class="budget-chart-name" title="${escapeHtml(project.name)}">${escapeHtml(project.name)}</span>
-        <div class="budget-chart-track"><div class="budget-chart-fill" style="width:${Math.max(2, project.budget / highestBudget * 100)}%"></div></div>
-        <span class="budget-chart-value">${formatBudget(project.budget, true)}</span>
-      </div>`).join("")
-    : '<p class="chart-footnote">Add projects to see budget comparisons.</p>';
+  renderAnalyticsCharts(counts, budgetProjects);
 
   const completed = projects.filter(project => project.status === "Completed").length;
   const inProgress = projects.filter(project => project.status === "In progress").length;
@@ -189,6 +183,156 @@ function renderAnalytics() {
   ];
   document.getElementById("portfolio-insights").innerHTML = insights.map(item => `
     <div class="insight-item"><div class="insight-item-label">${item.label}</div><div class="insight-item-value">${item.value}</div></div>`).join("");
+}
+
+function renderAnalyticsCharts(counts, budgetProjects) {
+  if (typeof Chart === "undefined") {
+    document.querySelectorAll(".chart-canvas-wrap").forEach(element => { element.hidden = true; });
+    document.getElementById("status-chart-error").hidden = false;
+    document.getElementById("budget-chart-error").hidden = false;
+    if (!chartLoadErrorReported) {
+      console.error("Chart.js did not load; analytics charts are unavailable.");
+      chartLoadErrorReported = true;
+    }
+    return;
+  }
+
+  document.getElementById("status-chart-error").hidden = true;
+  document.getElementById("budget-chart-error").hidden = true;
+  document.querySelector(".status-chart-wrap").hidden = false;
+  document.getElementById("status-chart-total").textContent = String(projects.length).padStart(2, "0");
+  document.getElementById("budget-chart-empty").hidden = budgetProjects.length > 0;
+  document.querySelector(".budget-chart-wrap").hidden = budgetProjects.length === 0;
+
+  const statusData = {
+    labels: counts.map(item => item.status),
+    datasets: [{
+      data: counts.map(item => item.count),
+      backgroundColor: counts.map(item => chartPalette[item.status]),
+      hoverBackgroundColor: counts.map(item => chartPalette[item.status]),
+      borderColor: "#171815",
+      borderWidth: 4,
+      hoverOffset: 7
+    }]
+  };
+  if (!statusChartInstance) {
+    statusChartInstance = new Chart(document.getElementById("status-chart"), {
+      type: "doughnut",
+      data: statusData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "74%",
+        animation: { duration: 500 },
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              color: "#b7b8ae",
+              padding: 17,
+              boxWidth: 8,
+              boxHeight: 8,
+              font: { family: '"DM Mono", Consolas, monospace', size: 9 },
+              generateLabels(chart) {
+                return Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart).map(item => ({
+                  ...item,
+                  text: `${item.text} · ${chart.data.datasets[0].data[item.index]}`
+                }));
+              }
+            }
+          },
+          tooltip: {
+            backgroundColor: "#24251f",
+            titleColor: "#f1f0eb",
+            bodyColor: "#c2c2b9",
+            borderColor: "rgba(245,196,0,.25)",
+            borderWidth: 1,
+            padding: 10,
+            callbacks: {
+              label(context) {
+                const count = context.raw;
+                return ` ${count} ${count === 1 ? "project" : "projects"} (${projects.length ? Math.round(count / projects.length * 100) : 0}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  } else {
+    statusChartInstance.data = statusData;
+    statusChartInstance.update();
+  }
+
+  const budgetData = {
+    labels: budgetProjects.map(project => project.name),
+    datasets: [{
+      data: budgetProjects.map(project => project.budget),
+      backgroundColor: budgetProjects.map((_, index) => index === 0 ? "#f5c400" : `rgba(245,196,0,${Math.max(.38, .78 - index * .1)})`),
+      hoverBackgroundColor: "#ffd21e",
+      borderRadius: 3,
+      borderSkipped: false,
+      barThickness: 22
+    }]
+  };
+  if (!budgetChartInstance) {
+    budgetChartInstance = new Chart(document.getElementById("budget-chart"), {
+      type: "bar",
+      data: budgetData,
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 500 },
+        layout: { padding: { right: 8 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#24251f",
+            titleColor: "#f1f0eb",
+            bodyColor: "#c2c2b9",
+            borderColor: "rgba(245,196,0,.25)",
+            borderWidth: 1,
+            padding: 10,
+            callbacks: {
+              label(context) {
+                return ` Budget: ${formatBudget(context.raw)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            border: { display: false },
+            grid: { color: "rgba(255,255,255,.07)", drawTicks: false },
+            ticks: {
+              color: "#77786f",
+              maxTicksLimit: 5,
+              padding: 8,
+              font: { family: '"DM Mono", Consolas, monospace', size: 8 },
+              callback(value) { return formatBudget(value, true); }
+            }
+          },
+          y: {
+            border: { display: false },
+            grid: { display: false },
+            ticks: {
+              color: "#b7b8ae",
+              padding: 9,
+              font: { family: '"Manrope", "Segoe UI", sans-serif', size: 9 },
+              callback(value) {
+                const label = this.getLabelForValue(value);
+                return label.length > 24 ? `${label.slice(0, 21)}…` : label;
+              }
+            }
+          }
+        }
+      }
+    });
+  } else {
+    budgetChartInstance.data = budgetData;
+    budgetChartInstance.update();
+  }
 }
 
 function renderAll() {

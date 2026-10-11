@@ -166,7 +166,11 @@ button { color: inherit; }
 .about-story h2 { margin: 13px 0 13px; font-size: clamp(28px, 3.2vw, 39px); font-weight: 600; letter-spacing: -.06em; line-height: 1.1; }
 .about-story p { max-width: 430px; margin: 0 0 11px; color: #96978e; font-size: 11px; line-height: 1.8; }
 .about-story .button { margin-top: 8px; }
+.about-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.about-actions .button { margin-top: 0; }
 .values-heading { margin: 37px 0 15px; }
+.technology-intro { max-width: 650px; margin: -2px 0 15px; color: #96978e; font-size: 11px; line-height: 1.8; }
+.technology-grid .value-card { min-height: 150px; }
 .values-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
 .value-card { position: relative; min-height: 171px; border: 1px solid var(--line-dark); background: #171815; padding: 19px; }
 .value-number { position: absolute; top: 17px; right: 18px; color: #66675f; font-family: var(--mono); font-size: 9px; }
@@ -222,24 +226,18 @@ button { color: inherit; }
 .analytics-kpi .metric-value { margin-top: 14px; font-size: 28px; }
 .kpi-note { color: #74756d; font-size: 8px; }
 .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-.chart-panel { min-height: 270px; }
+.chart-panel { min-height: 365px; }
 .chart-unit { color: #6f7068; font-size: 8px; letter-spacing: .07em; }
-.status-chart { display: grid; gap: 16px; margin-top: 26px; }
-.status-chart-row { display: grid; grid-template-columns: 78px minmax(55px,1fr) 28px; align-items: center; gap: 10px; }
-.status-chart-label { color: #aaa99f; font-size: 9px; }
-.status-chart-track { height: 7px; overflow: hidden; border-radius: 1px; background: #2b2c26; }
-.status-chart-fill { height: 100%; min-width: 0; border-radius: 1px; background: var(--gold); transition: width .35s ease; }
-.status-chart-fill.status-planning { background: #7987b0; }
-.status-chart-fill.status-on-hold { background: #d28a6d; }
-.status-chart-fill.status-completed { background: #67a885; }
-.status-chart-value { color: #deded5; font-family: var(--mono); font-size: 10px; text-align: right; }
-.chart-footnote { margin-top: 23px; color: #696a62; font-size: 8px; }
-.budget-chart { display: grid; gap: 11px; margin-top: 22px; }
-.budget-chart-row { display: grid; grid-template-columns: minmax(75px, 1fr) 2fr 58px; align-items: center; gap: 9px; }
-.budget-chart-name { overflow: hidden; color: #aaa99f; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
-.budget-chart-track { height: 6px; overflow: hidden; background: #2b2c26; }
-.budget-chart-fill { height: 100%; background: linear-gradient(90deg, #c49c00, var(--gold)); }
-.budget-chart-value { color: #c2c2b9; font-family: var(--mono); font-size: 8px; text-align: right; }
+.chart-canvas-wrap { position: relative; width: 100%; height: 280px; margin-top: 9px; }
+.chart-canvas-wrap[hidden], .chart-empty[hidden], .chart-unavailable[hidden] { display: none; }
+.status-chart-wrap { height: 280px; }
+.budget-chart-wrap { height: 280px; }
+.doughnut-center { position: absolute; top: 43%; left: 50%; display: flex; align-items: center; flex-direction: column; gap: 3px; transform: translate(-50%,-50%); pointer-events: none; }
+.doughnut-center strong { color: var(--paper); font-size: 24px; font-weight: 600; letter-spacing: -.05em; }
+.doughnut-center span { color: #77786f; font-family: var(--mono); font-size: 8px; letter-spacing: .08em; }
+.chart-footnote { margin: 10px 0 0; color: #696a62; font-size: 8px; }
+.chart-empty, .chart-unavailable { margin: 100px 0; color: #96978e; font-size: 10px; text-align: center; }
+.chart-unavailable { color: #dfa17e; }
 .insights-panel { margin-top: 12px; }
 .insight-live { display: flex; align-items: center; gap: 6px; color: #86877e; font-family: var(--mono); font-size: 8px; letter-spacing: .05em; }
 .insight-grid { display: grid; grid-template-columns: repeat(4,1fr); margin-top: 18px; }
@@ -340,6 +338,8 @@ button { color: inherit; }
   .analytics-kpis { grid-template-columns: 1fr; gap: 8px; margin-top: 18px; }
   .analytics-kpi { min-height: 96px; }
   .analytics-grid { grid-template-columns: 1fr; }
+  .chart-panel { min-height: 350px; }
+  .chart-canvas-wrap, .status-chart-wrap, .budget-chart-wrap { height: 265px; }
   .insight-grid { grid-template-columns: repeat(2,1fr); row-gap: 17px; }
   .insight-item:nth-child(3) { border-left: 0; padding-left: 0; }
   .form-grid { grid-template-columns: 1fr; }

@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
@@ -22,7 +23,7 @@
 
         <div class="workspace-label">WORKSPACE <span>01</span></div>
         <nav class="main-nav">
-          <a class="nav-link active" href="#home" data-route="home"><span class="nav-icon" aria-hidden="true">⌂</span>Overview</a>
+          <a class="nav-link active" href="#home" data-route="home"><span class="nav-icon" aria-hidden="true">⌂</span>Home</a>
           <a class="nav-link" href="#about" data-route="about"><span class="nav-icon" aria-hidden="true">◈</span>About us</a>
           <a class="nav-link" href="#projects" data-route="projects"><span class="nav-icon" aria-hidden="true">▤</span>Projects<span class="nav-count" id="nav-project-count">04</span></a>
           <a class="nav-link" href="#analytics" data-route="analytics"><span class="nav-icon" aria-hidden="true">⌁</span>Data analytics</a>
@@ -126,7 +127,10 @@
                 <h2>Growing through<br>every opportunity.</h2>
                 <p>I’ve worked at Publix since 2023, starting as a stock clerk and working my way up to my current role as a Business Systems Analyst at Publix Technology.</p>
                 <p>Today, I’m part of the Disaster Continuity and Recovery team, helping connect business needs and technology so teams can be better prepared to keep critical operations moving.</p>
-                <a class="button button-dark" href="#analytics">Explore the analytics <span aria-hidden="true">↗</span></a>
+                <div class="about-actions">
+                  <a class="button button-dark" href="#analytics">Explore the analytics <span aria-hidden="true">↗</span></a>
+                  <a class="button button-quiet" href="https://github.com/JonasCantey" target="_blank" rel="noopener noreferrer">Visit my GitHub <span aria-hidden="true">↗</span></a>
+                </div>
               </div>
             </div>
             <div class="section-heading values-heading"><div><div class="eyebrow">LESSONS THAT SHAPE MY WORK <span class="heading-period">/ 03</span></div><h2>What I bring to the work.</h2></div></div>
@@ -134,6 +138,13 @@
               <article class="value-card"><span class="value-number">01</span><div class="value-symbol">◎</div><h3>Grounded in operations.</h3><p>Starting in a store role gave me a practical view of the people and processes behind essential work.</p></article>
               <article class="value-card"><span class="value-number">02</span><div class="value-symbol">⌘</div><h3>Connecting the dots.</h3><p>I enjoy translating between business needs, technology, and the people who rely on both.</p></article>
               <article class="value-card"><span class="value-number">03</span><div class="value-symbol">✳</div><h3>Focused on resilience.</h3><p>I care about helping organizations prepare for disruption and recover so critical work can continue.</p></article>
+            </div>
+            <div class="section-heading values-heading"><div><div class="eyebrow">THE TOOLKIT BEHIND THIS SITE <span class="heading-period">/ 04</span></div><h2>How I built We-Build.</h2></div></div>
+            <p class="technology-intro">I created this functional website for We-Build, a fictional construction company, by leveraging Copilot within Visual Studio Code. GitHub helps keep the project organized and shareable.</p>
+            <div class="values-grid technology-grid">
+              <article class="value-card"><span class="value-number">01</span><div class="value-symbol">✳</div><h3>Copilot</h3><p>I used AI assistance to help design and build the site's pages and interactive features.</p></article>
+              <article class="value-card"><span class="value-number">02</span><div class="value-symbol">⌘</div><h3>Visual Studio Code</h3><p>My editor and workspace for developing and refining the We-Build website.</p></article>
+              <article class="value-card"><span class="value-number">03</span><div class="value-symbol">⌁</div><h3>GitHub</h3><p>For hosting and sharing my project and its source code.</p></article>
             </div>
             <section class="about-cta"><div><div class="eyebrow">LEARNING TODAY. BUILDING WHAT'S NEXT.</div><h2>Technology, data, and real-world impact.</h2></div><a class="button button-primary" href="#projects">Explore We-Build <span aria-hidden="true">↗</span></a></section>
           </section>
@@ -171,13 +182,21 @@
             <div class="analytics-grid">
               <section class="panel chart-panel">
                 <div class="panel-heading"><div><div class="eyebrow">PROJECT PIPELINE</div><h3>Where the work stands</h3></div><span class="chart-unit">PROJECTS</span></div>
-                <div id="status-chart" class="status-chart"></div>
-                <div class="chart-footnote">Project count by current status</div>
+                <div class="chart-canvas-wrap status-chart-wrap">
+                  <canvas id="status-chart" role="img" aria-label="Doughnut chart showing project counts by status"></canvas>
+                  <div class="doughnut-center" aria-hidden="true"><strong id="status-chart-total">04</strong><span>PROJECTS</span></div>
+                </div>
+                <p class="chart-unavailable" id="status-chart-error" role="status" hidden>Chart.js could not load. Check your internet connection and refresh to view project status.</p>
+                <div class="chart-footnote">Select a status in the legend to focus the chart</div>
               </section>
               <section class="panel chart-panel">
                 <div class="panel-heading"><div><div class="eyebrow">CAPITAL AT WORK</div><h3>Budget by project</h3></div><span class="chart-unit">USD</span></div>
-                <div id="budget-chart" class="budget-chart"></div>
-                <div class="chart-footnote">Budget comparison across current projects</div>
+                <div class="chart-canvas-wrap budget-chart-wrap">
+                  <canvas id="budget-chart" role="img" aria-label="Horizontal bar chart comparing project budgets"></canvas>
+                </div>
+                <p class="chart-empty" id="budget-chart-empty" hidden>No project data yet. Add a project to compare budgets.</p>
+                <p class="chart-unavailable" id="budget-chart-error" role="status" hidden>Chart.js could not load. Check your internet connection and refresh to view project budgets.</p>
+                <div class="chart-footnote">Top five projects by budget · Hover bars for exact amounts</div>
               </section>
             </div>
             <section class="panel insights-panel">
